@@ -2,6 +2,18 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+)
+
+type Element int
+
+const (
+	None Element = iota
+	Fire
+	Ice
+	Physical
+	Nature
+	Air
 )
 
 func main() {
@@ -10,8 +22,10 @@ func main() {
 type Attacks []Attack
 
 type Attack struct {
-	Name string
-	Desc string
+	Name    string
+	Desc    string
+	Dmg     int
+	Element Element
 }
 
 type Passives []Passive
@@ -77,6 +91,22 @@ func (r *Resistance) SetAir(v int) {
 	r.air = v
 }
 
+func (s *Stats) HP() int {
+	return s.hp
+}
+
+func (s *Stats) SetHP(val int) {
+	s.hp = val
+}
+
+func (s *Stats) Pow() int {
+	return s.pow
+}
+
+func (s *Stats) SetPow(val int) {
+	s.pow = val
+}
+
 func (s *Stats) Spd() int {
 	return s.spd
 }
@@ -96,6 +126,10 @@ func (m Minion) GetName() string {
 	return m.Name
 }
 
+func (m Minion) SelectAttack() Attack {
+	return (*m.Attacks)[rand.Int()%len(*m.Attacks)]
+}
+
 func (m Minion) String() string {
 	return fmt.Sprintf("%v (Minion) - %v", m.Name, m.spd)
 }
@@ -109,6 +143,10 @@ type Hero struct {
 
 func (h Hero) GetName() string {
 	return h.Name
+}
+
+func (h Hero) SelectAttack() Attack {
+	return (*h.Attacks)[rand.Int()%len(*h.Attacks)]
 }
 
 func (h Hero) String() string {
