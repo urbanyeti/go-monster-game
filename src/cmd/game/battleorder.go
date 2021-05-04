@@ -33,39 +33,63 @@ type BattleOrder struct {
 	Attackers Attackers
 	Active    Attackers
 	InActive  Attackers
-	Heroes    Attackers
 	Minions   Attackers
+	Heroes    Attackers
+	Dead      Attackers
+	Lookup    OrderLookup
 }
 
 type Attackers []Attacker
 
+type OrderLookup map[Attacker][]int
+
 func (bo *BattleOrder) Add(a Attacker) {
 	bo.Attackers = append(bo.Attackers, a)
-	switch x := a.(type) {
-	case Minion:
-		bo.Minions = append(bo.Minions, x)
-	case Hero:
-		bo.Heroes = append(bo.Heroes, x)
-	}
 }
 
-func (b *BattleOrder) Build() {
-	b.Attackers.Order()
-	b.Active = make(Attackers, len(b.Attackers))
-	copy(b.Active, b.Attackers)
-	b.InActive = Attackers{}
+func (bo *BattleOrder) Build() {
+	bo.Lookup = OrderLookup{}
+	bo.InActive = Attackers{}
+	bo.Heroes = Attackers{}
+	bo.Minions = Attackers{}
+	bo.Dead = Attackers{}
+
+	bo.Attackers.Order()
+
+	bo.Active = make(Attackers, len(bo.Attackers))
+	for i, a := range bo.Attackers {
+		bo.Lookup[a] = []int{i, i, -1, -1, -1, -1}
+		bo.Active[i] = a
+
+		switch a.(type) {
+		case Minion:
+			bo.Minions = append(bo.Minions, a)
+			bo.Lookup[a][3] = len(bo.Minions)
+		case Hero:
+			bo.Heroes = append(bo.Heroes, a)
+			bo.Lookup[a][4] = len(bo.Heroes)
+		}
+	}
+
 }
 
 func (bo *BattleOrder) Next() Attacker {
 	if len(bo.Active) == 0 {
+		bo.Attackers.Order()
+
 		bo.Active = make(Attackers, len(bo.Attackers))
-		copy(bo.Active, bo.Attackers)
+		for i, a := range bo.Attackers {
+			bo.Lookup[a][0], bo.Lookup[a][1], bo.Lookup[a][2] = i, i, -1
+			bo.Active[i] = a
+		}
 		bo.InActive = Attackers{}
 	}
 
 	a := bo.Active[0]
+	bo.Lookup[a][1] = -1
 	bo.Active = bo.Active[1:]
 	bo.InActive = append(bo.InActive, a)
+	bo.Lookup[a][2] = len(bo.InActive)
 	return a
 }
 
@@ -74,6 +98,35 @@ func (bo *BattleOrder) Attack(source Attacker, target Attacker) {
 	totalDmg := a.Dmg + source.Pow()
 	totalDmg -= GetResistance(totalDmg, a.Element, target)
 	target.SetHP(target.HP() - totalDmg)
+
+	if target.HP() <= 0 {
+		bo.RemoveAttacker(target)
+	}
+}
+
+func (bo *BattleOrder) RemoveAttacker(a Attacker) {
+	bo.Attackers.RemoveAttacker(a, bo.Lookup[a][0])
+	bo.Active.RemoveAttacker(a, bo.Lookup[a][1])
+	bo.InActive.RemoveAttacker(a, bo.Lookup[a][2])
+	switch a.(type) {
+	case Minion:
+		bo.Heroes.RemoveAttacker(a, bo.Lookup[a][3])
+	case Hero:
+		bo.Minions.RemoveAttacker(a, bo.Lookup[a][4])
+	}
+	bo.Dead = append(bo.Dead, a)
+	bo.Lookup[a][5] = len(bo.Dead)
+}
+
+func (al *Attackers) RemoveAttacker(a Attacker, pos int) {
+	if pos == -1 {
+		return
+	}
+	for j := pos; j < len(*al)-1; j++ {
+		(*al)[j] = (*al)[j+1]
+	}
+	*al = (*al)[:len(*al)-1]
+	return
 }
 
 func GetResistance(dmg int, element Element, target Attacker) int {

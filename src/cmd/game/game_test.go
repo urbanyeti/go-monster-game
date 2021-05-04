@@ -63,6 +63,18 @@ func TestBattleOrder_GetResistance(t *testing.T) {
 	assert.Equal(0, GetResistance(dmg, Air, m))
 }
 
+func TestBattleOrder_RemoveAttacker(t *testing.T) {
+	assert := assert.New(t)
+	bo := BattleOrder{}
+	bo.AddDefaultAttackers()
+	bo.Build()
+	bo.RemoveAttacker(bo.Minions[1])
+	assert.Equal(
+		bo.Attackers.ListNames(),
+		[]string{"Hero Tim", "Goblin A", "Troll", "Giant"},
+	)
+
+}
 func TestStats_SetHP(t *testing.T) {
 	assert := assert.New(t)
 	s := &Stats{}
