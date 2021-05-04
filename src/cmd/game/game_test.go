@@ -45,6 +45,51 @@ func TestBattleOrder_Next(t *testing.T) {
 	assert.Len(bo.InActive, 1)
 }
 
+func TestBattleOrder_GetResistance(t *testing.T) {
+	assert := assert.New(t)
+	dmg := 80
+	m := Minion{Stats: &Stats{Resistance: Resistance{
+		fire:   15,
+		ice:    100,
+		armor:  -20,
+		nature: -200,
+		air:    0,
+	}}}
+
+	assert.Equal(12, GetResistance(dmg, Fire, m))
+	assert.Equal(80, GetResistance(dmg, Ice, m))
+	assert.Equal(-16, GetResistance(dmg, Physical, m))
+	assert.Equal(-160, GetResistance(dmg, Nature, m))
+	assert.Equal(0, GetResistance(dmg, Air, m))
+}
+
+func TestStats_SetHP(t *testing.T) {
+	assert := assert.New(t)
+	s := &Stats{}
+	s.hp = 10
+	assert.Equal(10, s.HP())
+	s.SetHP(-100)
+	assert.Equal(-100, s.HP())
+}
+
+func TestStats_SetPow(t *testing.T) {
+	assert := assert.New(t)
+	s := &Stats{}
+	s.pow = 10
+	assert.Equal(10, s.Pow())
+	s.SetPow(-100)
+	assert.Equal(-100, s.Pow())
+}
+
+func TestStats_SetSpd(t *testing.T) {
+	assert := assert.New(t)
+	s := &Stats{}
+	s.spd = 10
+	assert.Equal(10, s.Spd())
+	s.SetSpd(-100)
+	assert.Equal(-100, s.Spd())
+}
+
 func TestStats_SetFire(t *testing.T) {
 	assert := assert.New(t)
 	s := &Stats{}
@@ -100,51 +145,51 @@ func (a Attackers) ListNames() []string {
 }
 
 func (bo *BattleOrder) AddDefaultAttackers() {
-	bo.Attackers = append(bo.Attackers, Minion{
+	bo.Add(Minion{
 		Name:  "Goblin A",
 		Stats: &Stats{spd: 6},
 		Attacks: &Attacks{
-			Attack{Name: "Bite"},
-			Attack{Name: "Scratch"},
+			Attack{Name: "Scratch", Dmg: 5, Element: Physical},
+			Attack{Name: "Grenade", Dmg: 5, Element: Fire},
 		},
 		Passives: &Passives{},
 	})
-	bo.Attackers = append(bo.Attackers, Minion{
+	bo.Add(Minion{
 		Name:  "Goblin B",
 		Stats: &Stats{spd: 5},
 		Attacks: &Attacks{
-			Attack{Name: "Bite"},
-			Attack{Name: "Scratch"},
+			Attack{Name: "Bite", Dmg: 10, Element: Physical},
+			Attack{Name: "Scratch", Dmg: 5, Element: Physical},
 		},
 		Passives: &Passives{},
 	})
-	bo.Attackers = append(bo.Attackers, Hero{
+	bo.Add(Hero{
 		Name:  "Hero Tim",
 		Stats: &Stats{spd: 7},
 		Attacks: &Attacks{
-			Attack{Name: "Sword Attack"},
-			Attack{Name: "Longbow Shot"},
+			Attack{Name: "Sword Attack", Dmg: 20, Element: Physical},
+			Attack{Name: "Longbow Shot", Dmg: 10, Element: Physical},
 		},
 		Passives: &Passives{
 			Passive{Name: "Shield Defense"},
 		},
 	})
-	bo.Attackers = append(bo.Attackers, Minion{
+	bo.Add(Minion{
 		Name:  "Troll",
 		Stats: &Stats{spd: 2},
 		Attacks: &Attacks{
-			Attack{Name: "Club Attack"},
+			Attack{Name: "Club Attack", Dmg: 10, Element: Physical},
 		},
 		Passives: &Passives{
 			Passive{Name: "Hard Skin"},
 		},
 	})
-	bo.Attackers = append(bo.Attackers, Minion{
+	bo.Add(Minion{
 		Name:  "Giant",
 		Stats: &Stats{spd: 1},
 		Attacks: &Attacks{
-			Attack{Name: "Stomp"},
-			Attack{Name: "Club Attack"},
+			Attack{Name: "Stomp", Dmg: 15, Element: Nature},
+			Attack{Name: "Club Attack", Dmg: 10, Element: Physical},
 		},
 		Passives: &Passives{
 			Passive{Name: "Hard Skin"},
