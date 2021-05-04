@@ -22,7 +22,59 @@ type Passive struct {
 }
 
 type Stats struct {
+	hp  int
+	pow int
 	spd int
+	def int
+	Resistance
+}
+
+type Resistance struct {
+	fire   int
+	ice    int
+	armor  int
+	nature int
+	air    int
+}
+
+func (r *Resistance) Fire() int {
+	return r.fire
+}
+
+func (r *Resistance) SetFire(v int) {
+	r.fire = v
+}
+
+func (r *Resistance) Ice() int {
+	return r.ice
+}
+
+func (r *Resistance) SetIce(v int) {
+	r.ice = v
+}
+
+func (r *Resistance) Armor() int {
+	return r.armor
+}
+
+func (r *Resistance) SetArmor(v int) {
+	r.armor = v
+}
+
+func (r *Resistance) Nature() int {
+	return r.nature
+}
+
+func (r *Resistance) SetNature(v int) {
+	r.nature = v
+}
+
+func (r *Resistance) Air() int {
+	return r.air
+}
+
+func (r *Resistance) SetAir(v int) {
+	r.air = v
 }
 
 func (s *Stats) Spd() int {

@@ -45,6 +45,51 @@ func TestBattleOrder_Next(t *testing.T) {
 	assert.Len(bo.InActive, 1)
 }
 
+func TestStats_SetFire(t *testing.T) {
+	assert := assert.New(t)
+	s := &Stats{}
+	s.fire = 10
+	assert.Equal(10, s.Fire())
+	s.SetFire(-100)
+	assert.Equal(-100, s.Fire())
+}
+
+func TestStats_SetIce(t *testing.T) {
+	assert := assert.New(t)
+	s := &Stats{}
+	s.ice = 10
+	assert.Equal(10, s.Ice())
+	s.SetIce(-100)
+	assert.Equal(-100, s.Ice())
+}
+
+func TestStats_SetArmor(t *testing.T) {
+	assert := assert.New(t)
+	s := &Stats{}
+	s.armor = 10
+	assert.Equal(10, s.Armor())
+	s.SetArmor(-100)
+	assert.Equal(-100, s.Armor())
+}
+
+func TestStats_SetNature(t *testing.T) {
+	assert := assert.New(t)
+	s := &Stats{}
+	s.nature = 10
+	assert.Equal(10, s.Nature())
+	s.SetNature(-100)
+	assert.Equal(-100, s.Nature())
+}
+
+func TestStats_SetAir(t *testing.T) {
+	assert := assert.New(t)
+	s := &Stats{}
+	s.air = 10
+	assert.Equal(10, s.Air())
+	s.SetAir(-100)
+	assert.Equal(-100, s.Air())
+}
+
 func (a Attackers) ListNames() []string {
 	var output []string
 	for _, v := range a {
