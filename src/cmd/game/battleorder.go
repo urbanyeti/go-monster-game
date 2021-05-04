@@ -3,6 +3,7 @@ package main
 import "math/rand"
 
 type Attacker interface {
+	GetName() string
 	Spd() int
 	SetSpd(int)
 }
@@ -24,6 +25,7 @@ func (b *BattleOrder) Build() {
 
 func (b *BattleOrder) Next() Attacker {
 	if len(b.Active) == 0 {
+		b.Active = make(Attackers, len(b.Attackers))
 		copy(b.Active, b.Attackers)
 		b.InActive = Attackers{}
 	}

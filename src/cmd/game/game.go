@@ -5,35 +5,20 @@ import (
 )
 
 func main() {
+}
 
-	bo := BattleOrder{}
-	bo.Attackers = append(bo.Attackers, Minion{&Stats{spd: 5}})
-	bo.Attackers = append(bo.Attackers, Minion{&Stats{spd: 1}})
-	bo.Attackers = append(bo.Attackers, Hero{&Stats{spd: 3}})
-	bo.Attackers = append(bo.Attackers, Minion{&Stats{spd: 4}})
-	bo.Attackers = append(bo.Attackers, Minion{&Stats{spd: 2}})
-	bo.Attackers = append(bo.Attackers, Hero{&Stats{spd: 9}})
-	bo.Attackers = append(bo.Attackers, Hero{&Stats{spd: 7}})
+type Attacks []Attack
 
-	bo.Build()
-	fmt.Println(bo.Attackers)
-	fmt.Println(bo.Active)
-	a := bo.Next()
+type Attack struct {
+	Name string
+	Desc string
+}
 
-	switch v := a.(type) {
-	case Minion:
-		fmt.Printf("It's a minion! %v\n", v)
-	case Hero:
-		fmt.Printf("It's a hero! %v\n", v)
-	default:
-		fmt.Println("unknown")
-	}
+type Passives []Passive
 
-	a.SetSpd(1)
-	fmt.Println(a)
-	fmt.Println(bo.Attackers)
-	fmt.Println(bo.Active)
-	fmt.Println(bo.InActive)
+type Passive struct {
+	Name string
+	Desc string
 }
 
 type Stats struct {
@@ -49,17 +34,31 @@ func (s *Stats) SetSpd(val int) {
 }
 
 type Minion struct {
+	Name string
+	*Attacks
+	*Passives
 	*Stats
+}
+
+func (m Minion) GetName() string {
+	return m.Name
 }
 
 func (m Minion) String() string {
-	return fmt.Sprintf("Minion - %v", m.spd)
+	return fmt.Sprintf("%v (Minion) - %v", m.Name, m.spd)
 }
 
 type Hero struct {
+	Name string
+	*Attacks
+	*Passives
 	*Stats
 }
 
+func (h Hero) GetName() string {
+	return h.Name
+}
+
 func (h Hero) String() string {
-	return fmt.Sprintf("Hero - %v", h.spd)
+	return fmt.Sprintf("%v (Hero) - %v", h.Name, h.spd)
 }
