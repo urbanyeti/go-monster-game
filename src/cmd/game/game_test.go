@@ -90,8 +90,8 @@ func TestBattleOrder_Attack(t *testing.T) {
 	bo.Build()
 	source, target := bo.Heroes[0], bo.Minions[0]
 	assert.Equal(5, target.HP())
-	bo.Attack(&source, &target)
-	assert.Equal(-7, target.HP())
+	bo.Attack(&source, &target, source.SelectAttack(0))
+	assert.Equal(-9, target.HP())
 
 	assert.Equal(
 		[]string{"Hero Tim", "Goblin B", "Troll", "Giant"},
@@ -197,8 +197,8 @@ func (bo *BattleOrder) AddDefaultAttackers() {
 		Name:  "Goblin A",
 		Stats: &Stats{hp: 5, pow: 1, spd: 6},
 		Attacks: &Attacks{
-			Attack{Name: "Scratch", Dmg: 5, Element: Physical},
-			Attack{Name: "Grenade", Dmg: 5, Element: Fire},
+			Attack{Name: "Scratch", Damages: []Damage{{Dmg: 5, Element: Physical}, {Dmg: 1, Element: Nature}}},
+			Attack{Name: "Grenade", Damages: []Damage{{Dmg: 5, Element: Fire}}},
 		},
 		Passives: &Passives{},
 	})
@@ -206,8 +206,8 @@ func (bo *BattleOrder) AddDefaultAttackers() {
 		Name:  "Goblin B",
 		Stats: &Stats{hp: 7, pow: 2, spd: 5},
 		Attacks: &Attacks{
-			Attack{Name: "Bite", Dmg: 10, Element: Physical},
-			Attack{Name: "Scratch", Dmg: 5, Element: Physical},
+			Attack{Name: "Bite", Damages: []Damage{{Dmg: 10, Element: Physical}}},
+			Attack{Name: "Scratch", Damages: []Damage{{Dmg: 5, Element: Physical}, {Dmg: 1, Element: Nature}}},
 		},
 		Passives: &Passives{},
 	})
@@ -215,8 +215,8 @@ func (bo *BattleOrder) AddDefaultAttackers() {
 		Name:  "Hero Tim",
 		Stats: &Stats{hp: 30, pow: 2, spd: 7},
 		Attacks: &Attacks{
-			Attack{Name: "Sword Attack", Dmg: 20, Element: Physical},
-			Attack{Name: "Longbow Shot", Dmg: 10, Element: Physical},
+			Attack{Name: "Sword Attack", Damages: []Damage{{Dmg: 12, Element: Physical}}},
+			Attack{Name: "Longbow Shot", Damages: []Damage{{Dmg: 8, Element: Physical}, {Dmg: 2, Element: Air}}},
 		},
 		Passives: &Passives{
 			Passive{Name: "Shield Defense"},
@@ -226,7 +226,7 @@ func (bo *BattleOrder) AddDefaultAttackers() {
 		Name:  "Troll",
 		Stats: &Stats{hp: 15, pow: 5, spd: 2},
 		Attacks: &Attacks{
-			Attack{Name: "Club Attack", Dmg: 10, Element: Physical},
+			Attack{Name: "Club Attack", Damages: []Damage{{Dmg: 10, Element: Physical}}},
 		},
 		Passives: &Passives{
 			Passive{Name: "Hard Skin"},
@@ -236,8 +236,8 @@ func (bo *BattleOrder) AddDefaultAttackers() {
 		Name:  "Giant",
 		Stats: &Stats{hp: 20, pow: 5, spd: 1},
 		Attacks: &Attacks{
-			Attack{Name: "Stomp", Dmg: 15, Element: Nature},
-			Attack{Name: "Club Attack", Dmg: 10, Element: Physical},
+			Attack{Name: "Stomp", Damages: []Damage{{Dmg: 15, Element: Nature}}},
+			Attack{Name: "Club Attack", Damages: []Damage{{Dmg: 10, Element: Physical}}},
 		},
 		Passives: &Passives{
 			Passive{Name: "Hard Skin"},

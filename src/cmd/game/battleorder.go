@@ -26,7 +26,8 @@ type Attacker interface {
 	SetNature(int)
 	Air() int
 	SetAir(int)
-	SelectAttack() Attack
+	SelectAttack(int) *Attack
+	SelectRandomAttack() *Attack
 }
 
 type BattleOrder struct {
@@ -93,11 +94,15 @@ func (bo *BattleOrder) Next() Attacker {
 	return a
 }
 
-func (bo *BattleOrder) Attack(source *Attacker, target *Attacker) {
-	a := (*source).SelectAttack()
-	totalDmg := a.Dmg + (*source).Pow()
-	totalDmg -= GetResistance(totalDmg, a.Element, *target)
-	(*target).SetHP((*target).HP() - totalDmg)
+func (bo *BattleOrder) Attack(source *Attacker, target *Attacker, a *Attack) {
+	if a == nil {
+		a = (*source).SelectRandomAttack()
+	}
+	for _, d := range a.Damages {
+		totalDmg := d.Dmg + (*source).Pow()
+		totalDmg -= GetResistance(totalDmg, d.Element, *target)
+		(*target).SetHP((*target).HP() - totalDmg)
+	}
 
 	if (*target).HP() <= 0 {
 		bo.KillAttacker(*target)

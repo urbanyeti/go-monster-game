@@ -24,11 +24,15 @@ type Attacks []Attack
 type Attack struct {
 	Name    string
 	Desc    string
-	Dmg     int
-	Element Element
+	Damages []Damage
 }
 
 type Passives []Passive
+
+type Damage struct {
+	Dmg     int
+	Element Element
+}
 
 type Passive struct {
 	Name string
@@ -126,8 +130,12 @@ func (m Minion) GetName() string {
 	return m.Name
 }
 
-func (m Minion) SelectAttack() Attack {
-	return (*m.Attacks)[rand.Int()%len(*m.Attacks)]
+func (m Minion) SelectRandomAttack() *Attack {
+	return &(*m.Attacks)[rand.Int()%len(*m.Attacks)]
+}
+
+func (m Minion) SelectAttack(i int) *Attack {
+	return &(*m.Attacks)[i]
 }
 
 func (m Minion) String() string {
@@ -145,10 +153,18 @@ func (h Hero) GetName() string {
 	return h.Name
 }
 
-func (h Hero) SelectAttack() Attack {
-	return (*h.Attacks)[rand.Int()%len(*h.Attacks)]
+func (h Hero) SelectRandomAttack() *Attack {
+	return &(*h.Attacks)[rand.Int()%len(*h.Attacks)]
+}
+
+func (h Hero) SelectAttack(i int) *Attack {
+	return &(*h.Attacks)[i]
 }
 
 func (h Hero) String() string {
 	return fmt.Sprintf("%v (Hero) - %v", h.Name, h.spd)
+}
+
+func (h Hero) GetAttacks() []Attack {
+	return *h.Attacks
 }
